@@ -13,3 +13,9 @@ pandas = "*"
 
 [requires]
 python_version = "3.8"
+
+
+[scripts]
+run="python run.py"
+validate="python validate.py"
+clear="python clear.py"
