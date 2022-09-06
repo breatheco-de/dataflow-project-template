@@ -4,7 +4,10 @@ import pandas as pd
 import os
 
 from colorama import Fore, Back, Style
-from tests.utils import load_pipelines, get_params, get_transformation
+from utils.core import (
+    load_pipelines_from_project, get_params, get_transformation, scan_for_pipelines, 
+    scan_pipeline_transformations
+)
 from deepdiff import DeepDiff
 
 
@@ -35,12 +38,13 @@ def validate_trans(q, t, _errors):
 
 pipeline, source = get_params()
 errors = {}
-pipelines = load_pipelines(pipeline)
+pipelines = scan_for_pipelines()
 
 for pipe in pipelines:
     print('\n\nStarting to validate every pipeline and transformation...\n')
-    for t in pipe['transformations']:
-        errors = validate_trans(pipe['slug'], t, errors)
+    transformations = scan_pipeline_transformations(pipe)
+    for t in transformations:
+        errors = validate_trans(pipe, t, errors)
 
 if len(errors) > 0:
     print('\n')
@@ -56,6 +60,6 @@ if len(errors) > 0:
     print(Style.RESET_ALL + '\n')
     exit(1)
 else:
-    print(Back.RED + f'Report: All transformations return the expected outputs 🙂', end='')
+    print(Back.GREEN + f'Report: All {len(pipelines)} transformations return the expected outputs 🙂', end='')
     print(Style.RESET_ALL)
     exit(0)

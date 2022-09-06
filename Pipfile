@@ -8,14 +8,14 @@ pyyaml = "*"
 deepdiff = "*"
 colorama = "*"
 pandas = "*"
+numpy = "*"
 
 [dev-packages]
 
 [requires]
 python_version = "3.8"
 
-
 [scripts]
-run="python run.py"
+pipeline="python run.py"
 validate="python validate.py"
 clear="python clear.py"

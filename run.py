@@ -4,16 +4,16 @@ import sys
 import os
 import pandas
 from colorama import Fore, Back, Style
-from tests.utils import load_pipelines, get_params, load_pipelines, get_transformation
+from utils.core import load_pipelines_from_project, get_params, load_pipelines_from_project, get_transformation
 
 
 pipeline, source = get_params()
 if pipeline is None:
-    all = load_pipelines()
+    all = load_pipelines_from_project()
     raise Exception(f'Please specify pipline to load from the following options: ' +
                     ",".join([p['slug'] for p in all]))
 else:
-    pipeline = load_pipelines(pipeline)[0]
+    pipeline = load_pipelines_from_project(pipeline)[0]
 
 
 if source is None:

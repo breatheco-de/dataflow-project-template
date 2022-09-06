@@ -5,7 +5,11 @@ from importlib import import_module
 from deepdiff import DeepDiff
 
 
-def load_pipelines(slug=None):
+def scan_pipelines(slug=None):
+    transformations = []
+
+
+def load_pipelines_from_project(slug=None):
     queues = []
     project = None
     with open('project.yml', 'r') as file:
@@ -37,6 +41,28 @@ def get_params():
 
     return pipeline, source
 
+def scan_for_pipelines():
+    piplines = []
+    dir_path = os.path.dirname(os.path.realpath(__file__)) + '/../transformations'
+    files = os.listdir(dir_path)
+    for f in files:
+        if os.path.isdir(dir_path+"/"+f): 
+            piplines.append(f)
+
+    return piplines
+
+def scan_pipeline_transformations(pipeline_name):
+    transformations = []
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    files = os.listdir(dir_path + '/../transformations/' + pipeline_name)
+    for file_name in files:
+        if '.py' not in file_name:
+            continue
+        if file_name in ['__init__.py']:
+            continue
+        transformations.append(file_name[0:-3])
+
+    return transformations
 
 def get_transformation(pipeline_name, transformation):
     try:
