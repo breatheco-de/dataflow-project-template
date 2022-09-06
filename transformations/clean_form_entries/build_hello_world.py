@@ -5,7 +5,7 @@ expected_input = [{
 
 expected_output = [{
     **expected_input[0],
-    'together': 'Hello Worrld',
+    'together': 'Hello World',
 }]
 
 

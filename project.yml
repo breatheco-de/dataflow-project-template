@@ -3,4 +3,4 @@ name: "Lead Collection"
 pipelines:
   - slug: "clean_form_entries"
     transformations:
-      - build_hello_worlds
+      - build_hello_world
