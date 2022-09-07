@@ -9,6 +9,5 @@
 # Validate and run:
 
 - Validate your transformations running `$ pipenv run validate`.
-- 
 - Run your pipline by running `$ pipenv run <pipeline_slug> <dataset_name>`: It will generate a ew csv file inside `./output` directory.
 
