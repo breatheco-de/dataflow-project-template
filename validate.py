@@ -51,7 +51,9 @@ def validate_trans(q, t, _errors):
         print(Fore.RED + q + '.' + t + ' ❌', end='')
     elif len(diff.keys()) != 0:
         print(Fore.RED + q + '.' + t + ' ❌', end='')
-        _errors[q + '.' + t] = str(diff)
+        if "values_changed" in diff:
+            diff = diff["values_changed"]
+        _errors[q + '.' + t] = "\n".join(f"{k}: {v}" for k, v in diff.items())
     elif len(in_out_same.keys()) == 0:
         print(Fore.RED + q + '.' + t + ' ❌', end='')
         _errors[q + '.' + t] = 'The expected_input and expected_output variables have the same values'
