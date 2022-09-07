@@ -14,7 +14,12 @@ from deepdiff import DeepDiff
 def validate_trans(q, t, _errors):
     try:
         run, _in, _out = get_transformation(q, t)
-        output = run(pd.DataFrame(_in, index=[0])).to_dict('records')
+        if isinstance(_in, list):
+            output = run(pd.DataFrame(_in, index=[0])).to_dict('records')
+        elif isinstance(_id, pd.DataFrame):
+            output = run(_in).to_dict('records')
+        else:
+            raise Exception(f'Invalid type {type(_id)} for variable expected_input (expected list or DataFrame)')
 
         in_out_same = DeepDiff(_in, _out)
         diff = DeepDiff(output, _out)
