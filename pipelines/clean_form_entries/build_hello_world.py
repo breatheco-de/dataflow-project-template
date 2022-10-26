@@ -1,10 +1,10 @@
-expected_input = [{
+expected_inputs = [{
     'first_name': 'Hello',
     'last_name': 'World',
 }]
 
 expected_output = [{
-    **expected_input[0],
+    **expected_inputs[0],
     'together': 'Hello World',
 }]
 

@@ -4,3 +4,4 @@ pipelines:
   - slug: "clean_form_entries"
     transformations:
       - build_hello_world
+      - add_salutation

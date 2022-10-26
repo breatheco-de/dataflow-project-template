@@ -13,40 +13,65 @@ from utils.core import (
 from deepdiff import DeepDiff
 
 
-def to_df(df):
-    if isinstance(df, list):
-        try:
-            return pd.DataFrame(df)
-        except Exception as e:
-            print(df)
-            raise e
-    elif isinstance(df, pd.DataFrame):
-        return df
-    else:
-        raise Exception(
-            f'Invalid type {type(df)} for variable "expected_input" or "ouput" (expected list or DataFrame)')
+def to_df(_lists):
+    _dfs = []
+    for l in _lists:
+        if isinstance(l, list):
+            try:
+                _dfs.append(pd.DataFrame(l))
+            except Exception as e:
+                print(l)
+                raise e
+        elif isinstance(l, pd.DataFrame):
+            _dfs.append(l)
+        else:
+            raise Exception(
+                f'Invalid type {type(l)} for variable "expected_inputs" or "ouput" (expected list or DataFrame)')
+    return _dfs
 
 
-def lo_list(df):
-    if isinstance(df, list):
-        return df
-    elif isinstance(df, pd.DataFrame):
-        return df.to_dict('records')
-    else:
-        raise Exception(
-            f'Invalid type {type(df)} for variable "expected_input" or "ouput" (expected list or DataFrame)')
+def lo_list(_dfs):
+    if len(_dfs) > 0:
+        if isinstance(_dfs[0], dict):
+            _dfs = [_dfs]
+
+    _lists = []
+    for df in _dfs:
+        if isinstance(df, list):
+            _lists.append(df)
+        elif isinstance(df, pd.DataFrame):
+            _lists.append(df.to_dict('records'))
+        else:
+            raise Exception(
+                f'Invalid type {type(df)} for variable "expected_inputs" or "ouput" (expected list or DataFrame)')
+    return _lists
 
 
 def validate_trans(q, t, _errors):
     try:
         run, _in, _out = get_transformation(q, t)
-        output = run(to_df(_in))
+        if not isinstance(_in, list):
+            raise Exception("Transformation expected_inputs must be a list")
+
+        if len(_in) == 0:
+            raise Exception("Transformation expected_inputs are empty")
+
+        if len(_in) == 1:
+            if not isinstance(_in[0], list):
+                _in = [_in]
+        else:
+            for i in range(len(_in)):
+                if not isinstance(_in[i], list):
+                    raise Exception(
+                        "You have more than one expected_inputs, each of them must be a list but the {i} position it's not")
+
+        output = run(*to_df(_in))
         if output is None:
             raise Exception("Transformation needs to return a dataset")
         output = output.to_dict('records')
 
-        in_out_same = DeepDiff(lo_list(_in), lo_list(_out))
-        diff = DeepDiff(lo_list(output), lo_list(_out))
+        in_out_same = DeepDiff(lo_list(_in)[0], lo_list(_out)[0])
+        diff = DeepDiff(lo_list(output)[0], lo_list(_out)[0])
     except Exception as e:
         _errors[q + '.' + t] = e
 
@@ -59,15 +84,17 @@ def validate_trans(q, t, _errors):
         _errors[q + '.' + t] = "\n".join(f"{k}: {v}" for k, v in diff.items())
     elif len(in_out_same.keys()) == 0:
         print(Fore.RED + q + '.' + t + ' ❌', end='')
-        _errors[q + '.' + t] = 'The expected_input and expected_output variables have the same values'
+        _errors[q + '.' + t] = 'The expected_inputs and expected_output variables have the same values'
     else:
         print(Fore.GREEN + q + '.' + t + ' ✅', end='')
+
     print(Style.RESET_ALL)
     print('')
-    return errors
+
+    return _errors
 
 
-pipeline, source = get_params()
+pipeline, sources = get_params()
 errors = {}
 pipelines = scan_for_pipelines()
 

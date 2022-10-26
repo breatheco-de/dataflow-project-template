@@ -32,29 +32,32 @@ def load_pipelines_from_project(slug=None):
 
 def get_params():
     pipeline = None
-    source = None
+    sources = None
+
     try:
         pipeline = sys.argv[1]
-        source = sys.argv[2]
+        sources = sys.argv[2:]
     except IndexError:
         pass
 
-    return pipeline, source
+    return pipeline, sources
+
 
 def scan_for_pipelines():
     piplines = []
-    dir_path = os.path.dirname(os.path.realpath(__file__)) + '/../transformations'
+    dir_path = os.path.dirname(os.path.realpath(__file__)) + '/../pipelines'
     files = os.listdir(dir_path)
     for f in files:
-        if os.path.isdir(dir_path+"/"+f): 
+        if os.path.isdir(dir_path+"/"+f):
             piplines.append(f)
 
     return piplines
 
+
 def scan_pipeline_transformations(pipeline_name):
     transformations = []
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    files = os.listdir(dir_path + '/../transformations/' + pipeline_name)
+    files = os.listdir(dir_path + '/../pipelines/' + pipeline_name)
     for file_name in files:
         if '.py' not in file_name:
             continue
@@ -64,9 +67,11 @@ def scan_pipeline_transformations(pipeline_name):
 
     return transformations
 
+
 def get_transformation(pipeline_name, transformation):
+    mod = None
     try:
-        mod = import_module('transformations.' +
+        mod = import_module('pipelines.' +
                             pipeline_name + '.' + transformation)
     except ModuleNotFoundError as e:
         raise Exception(f'Transformation does not exist:' +
@@ -74,11 +79,16 @@ def get_transformation(pipeline_name, transformation):
     except ImportError as e:
         raise Exception(f'Error importing transformations.' +
                         pipeline_name + '.' + transformation)
+    except Exception as e:
+        print(f'Error: check for errors on transformation ' +
+              pipeline_name + '.' + transformation)
+        raise e
+
     try:
-        expected_input = getattr(mod, 'expected_input')
+        expected_inputs = getattr(mod, 'expected_inputs')
     except AttributeError:
         raise Exception(
-            f'Error importing the the expected_input')
+            f'Error importing the the expected_inputs')
 
     try:
         expected_output = getattr(mod, 'expected_output')
@@ -92,7 +102,7 @@ def get_transformation(pipeline_name, transformation):
         raise Exception(
             f'Missing the run function')
 
-    return run, expected_input, expected_output
+    return run, expected_inputs, expected_output
 
 
 class MockDataset(object):
