@@ -40,7 +40,10 @@ def lo_list(df):
 def validate_trans(q, t, _errors):
     try:
         run, _in, _out = get_transformation(q, t)
-        output = run(to_df(_in)).to_dict('records')
+        output = run(to_df(_in))
+        if output is None:
+            raise Exception("Transformation needs to return a dataset")
+        output = output.to_dict('records')
 
         in_out_same = DeepDiff(lo_list(_in), lo_list(_out))
         diff = DeepDiff(lo_list(output), lo_list(_out))
