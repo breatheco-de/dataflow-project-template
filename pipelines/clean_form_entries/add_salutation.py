@@ -14,7 +14,7 @@ expected_inputs = [
 
 expected_output = [{
     **expected_inputs[0][0],
-    'together': 'Mr George',
+    'salute': 'Mr George',
 }]
 
 

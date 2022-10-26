@@ -1,15 +1,15 @@
-expected_inputs = [{
+expected_inputs = [[{
     'first_name': 'Hello',
     'last_name': 'World',
-}]
+}], []]
 
 expected_output = [{
-    **expected_inputs[0],
+    **expected_inputs[0][0],
     'together': 'Hello World',
 }]
 
 
-def run(df):
+def run(df, df2):
     """
     It will create a full name property on the payload
     """

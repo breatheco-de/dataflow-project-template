@@ -96,13 +96,18 @@ def validate_trans(q, t, _errors):
 
 pipeline, sources = get_params()
 errors = {}
-pipelines = scan_for_pipelines()
+pipelines = load_pipelines_from_project()
+
 
 for pipe in pipelines:
+    if "sources" not in pipe:
+        raise Exception(
+            f"Pipeline {pipe['slug']} is missing sources on the YML")
+
     print('\n\nStarting to validate every pipeline and transformation...\n')
-    transformations = scan_pipeline_transformations(pipe)
+    transformations = scan_pipeline_transformations(pipe['slug'])
     for t in transformations:
-        errors = validate_trans(pipe, t, errors)
+        errors = validate_trans(pipe['slug'], t, errors)
 
 if len(errors) > 0:
     print('\n')
