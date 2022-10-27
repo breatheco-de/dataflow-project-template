@@ -71,7 +71,17 @@ def validate_trans(q, t, _errors):
         output = output.to_dict('records')
 
         in_out_same = DeepDiff(lo_list(_in)[0], lo_list(_out)[0])
-        diff = DeepDiff(lo_list(output)[0], lo_list(_out)[0])
+
+        if len(output) > 0:
+            output = lo_list(output)[0]
+        if len(_out) > 0:
+            _out = lo_list(_out)[0]
+
+        if len(output) == 0 and len(_out) > 0:
+            raise Exception(
+                'Transformation output its empty but you were expecting more')
+
+        diff = DeepDiff(output, _out)
     except Exception as e:
         _errors[q + '.' + t] = e
 
@@ -103,6 +113,13 @@ for pipe in pipelines:
     if "sources" not in pipe:
         raise Exception(
             f"Pipeline {pipe['slug']} is missing sources on the YML")
+
+    if "destination" not in pipe:
+        raise Exception(
+            f"Pipeline {pipe['slug']} is missing destination on the YML")
+    elif isinstance(pipe["destination"], list):
+        raise Exception(
+            f"Pipeline {pipe['slug']} destinatino cannot be a list, you can only output to one destination")
 
     print('\n\nStarting to validate every pipeline and transformation...\n')
     transformations = scan_pipeline_transformations(pipe['slug'])

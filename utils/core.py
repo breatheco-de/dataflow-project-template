@@ -19,7 +19,7 @@ def load_pipelines_from_project(slug=None):
         raise Exception("Project.yml is missing pipelines property")
 
     if not isinstance(project['pipelines'], list):
-        raise Exception("Property 'piplines' on project.yml must be a list")
+        raise Exception("Property 'pipelines' on project.yml must be a list")
 
     if slug is not None:
         for p in project['pipelines']:
@@ -44,14 +44,14 @@ def get_params():
 
 
 def scan_for_pipelines():
-    piplines = []
+    pipelines = []
     dir_path = os.path.dirname(os.path.realpath(__file__)) + '/../pipelines'
     files = os.listdir(dir_path)
     for f in files:
         if os.path.isdir(dir_path+"/"+f):
-            piplines.append(f)
+            pipelines.append(f)
 
-    return piplines
+    return pipelines
 
 
 def scan_pipeline_transformations(pipeline_name):
