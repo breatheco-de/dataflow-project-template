@@ -3,6 +3,7 @@ import time
 import sys
 import os
 import pandas
+import inspect
 from colorama import Fore, Back, Style
 from utils.core import load_pipelines_from_project, get_params, load_pipelines_from_project, get_transformation
 
