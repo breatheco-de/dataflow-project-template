@@ -42,7 +42,9 @@ for t in pipeline['transformations']:
     run, _in, _out = get_transformation(pipeline['slug'], t)
     if df_out is not None:
         dfs[0] = df_out
-    df_out = run(*dfs)
+        
+    args_spect = inspect.getfullargspec(run)
+    df_out = run(*dfs[:len(args_spect.args)])
 
 file_name = source.split('.')[0]
 df_out.to_csv(
