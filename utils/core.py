@@ -1,6 +1,8 @@
 import os
 import sys
 import yaml
+import argparse
+import inspect
 from importlib import import_module
 from deepdiff import DeepDiff
 
@@ -31,16 +33,58 @@ def load_pipelines_from_project(slug=None):
 
 
 def get_params():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-s", "--stream", help="Name of CSV file that contains stream samples under ./sources directory")
+    parser.add_argument(
+        "-n", "--name", help="Name of pipeline you want to run")
+    flags = parser.parse_args()
+
     pipeline = None
-    sources = None
+    stream = None
+    source = None
 
     try:
-        pipeline = sys.argv[1]
-        sources = sys.argv[2:]
-    except IndexError:
+        stream = flags.stream
+    except AttributeError:
         pass
 
-    return pipeline, sources
+    try:
+        pipeline = flags.name
+    except AttributeError:
+        pass
+
+    try:
+        source = flags.source
+    except AttributeError:
+        pass
+
+    return pipeline, source, stream
+
+
+def validate_transformation_params(func, stream=None):
+
+    args_spect = inspect.getfullargspec(func)
+
+    if stream is not None and "stream" not in args_spect.args:
+        raise Exception(
+            'You specified a --stream parameter but your transformation its not expecting it, please define the "stream" param in the function declaration')
+
+# Your transformation is expecting a stream, please specify a --stream flag when typing the "run" command with the name of the csv file that contains the stream
+    if "stream" in args_spect.args:
+        position = args_spect.args.index("stream")
+        # stream must be the last parameter in the transformation
+        if position != (len(args_spect.args)-1):
+            raise Exception(
+                "Parameter stream must be the last one declared in the transformation parameters")
+
+        has_default = args_spect.defaults is not None and len(
+            args_spect.defaults) > 0
+        if stream is None and not has_default:
+            raise Exception(
+                'Your transformation is expecting a stream, please specify a --stream flag when typing the "run" command with the name of the csv file that contains the stream or delete the stream parameter or set the stream parameter default value to None')
+
+    return args_spect.args
 
 
 def scan_for_pipelines():
@@ -90,6 +134,12 @@ def get_transformation(pipeline_name, transformation):
         raise Exception(
             f'Error importing the the expected_inputs')
 
+    stream = None
+    try:
+        stream = getattr(mod, 'stream')
+    except AttributeError:
+        pass
+
     try:
         expected_output = getattr(mod, 'expected_output')
     except AttributeError:
@@ -102,7 +152,7 @@ def get_transformation(pipeline_name, transformation):
         raise Exception(
             f'Missing the run function')
 
-    return run, expected_inputs, expected_output
+    return run, expected_inputs, expected_output, stream
 
 
 class MockDataset(object):
