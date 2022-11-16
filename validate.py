@@ -4,7 +4,6 @@ import pandas as pd
 import os
 import traceback
 
-
 from colorama import Fore, Back, Style
 from utils.core import (
     load_pipelines_from_project, get_params, get_transformation, scan_for_pipelines,
@@ -30,8 +29,12 @@ def to_df(_lists):
     return _dfs
 
 
-def lo_list(_dfs):
-    if len(_dfs) > 0:
+def to_list(_dfs):
+
+    if isinstance(_dfs, pd.DataFrame):
+        return [_dfs.to_dict('records')]
+
+    if isinstance(_dfs, list) and len(_dfs) > 0:
         if isinstance(_dfs[0], dict):
             _dfs = [_dfs]
 
@@ -40,6 +43,7 @@ def lo_list(_dfs):
         if isinstance(df, list):
             _lists.append(df)
         elif isinstance(df, pd.DataFrame):
+            print("trying to make dfs a datagrame")
             _lists.append(df.to_dict('records'))
         else:
             raise Exception(
@@ -49,33 +53,61 @@ def lo_list(_dfs):
 
 def validate_trans(q, t, _errors):
     try:
-        run, _in, _out = get_transformation(q, t)
-        if not isinstance(_in, list):
-            raise Exception("Transformation expected_inputs must be a list")
+        run, _in, _out, _stream = get_transformation(q, t)
 
-        if len(_in) == 0:
+        if isinstance(_in, pd.DataFrame):
+            _in = [_in]
+
+        # list of dicts
+        if len(_in) > 0 and isinstance(_in[0], dict):
+            _in = [_in]
+
+        # input its a list of lists
+        if len(_in) > 0 and not isinstance(_in[0], pd.DataFrame):
+            _in = to_df(_in)
+
+        if _in is None or (isinstance(_in, list) and len(_in) == 0):
             raise Exception("Transformation expected_inputs are empty")
 
-        if len(_in) == 1:
-            if not isinstance(_in[0], list):
-                _in = [_in]
+        # protect in from mutations
+        in_backup = [df.copy() for df in _in]
+
+        if _stream is not None:
+            _stream = to_list(_stream)[0]
+            print(_stream)
+            print(
+                Fore.BLUE + f'Found {len(_stream)} streams to validate, will run transformation {len(_stream)} times')
         else:
-            for i in range(len(_in)):
-                if not isinstance(_in[i], list):
-                    raise Exception(
-                        "You have more than one expected_inputs, each of them must be a list but the {i} position it's not")
+            _stream = [None]
 
-        output = run(*to_df(_in))
-        if output is None:
-            raise Exception("Transformation needs to return a dataset")
-        output = output.to_dict('records')
+        output = None
+        buffer = None
+        for stream_index in range(len(_stream)):
 
-        in_out_same = DeepDiff(lo_list(_in)[0], lo_list(_out)[0])
+            kwargs = {}
+            if _stream[stream_index] is not None:
+                print(Fore.BLUE + f' Stream {stream_index} ...')
+                kwargs['stream'] = _stream[stream_index]
+
+            if buffer is not None:
+                _in[0] = buffer
+
+            output = run(*_in, **kwargs)
+            if output is None:
+                raise Exception("Transformation needs to return a dataset")
+            buffer = output
+            output = output.to_dict('records')
+
+        # just in case the _in variable has mutated
+        _in = in_backup
+
+        in_out_same = DeepDiff(to_list(_in)[0], to_list(_out)[0])
 
         if len(output) > 0:
-            output = lo_list(output)[0]
+            output = to_list(output)[0]
+
         if len(_out) > 0:
-            _out = lo_list(_out)[0]
+            _out = to_list(_out)[0]
 
         if len(output) == 0 and len(_out) > 0:
             raise Exception(
@@ -89,9 +121,8 @@ def validate_trans(q, t, _errors):
         print(Fore.RED + q + '.' + t + ' ❌', end='')
     elif len(diff.keys()) != 0:
         print(Fore.RED + q + '.' + t + ' ❌', end='')
-        if "values_changed" in diff:
-            diff = diff["values_changed"]
-        _errors[q + '.' + t] = "\n".join(f"{k}: {v}" for k, v in diff.items())
+        _errors[q + '.' +
+                t] = "\n".join(f"{k}: {v} \n" for k, v in diff.items())
     elif len(in_out_same.keys()) == 0:
         print(Fore.RED + q + '.' + t + ' ❌', end='')
         _errors[q + '.' + t] = 'The expected_inputs and expected_output variables have the same values'
@@ -104,12 +135,17 @@ def validate_trans(q, t, _errors):
     return _errors
 
 
-pipeline, sources = get_params()
+# _stream_path is ignored because we are unit testing
+pipeline, sources, _stream_path = get_params()
 errors = {}
 pipelines = load_pipelines_from_project()
 
 
 for pipe in pipelines:
+
+    if pipeline is not None and pipeline != pipe['slug']:
+        continue
+
     if "sources" not in pipe:
         raise Exception(
             f"Pipeline {pipe['slug']} is missing sources on the YML")
