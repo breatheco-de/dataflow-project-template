@@ -96,6 +96,13 @@ def run(df, df2):
 
 When you run the `pipenv run validate` command, Dataflow will run the transformation function while passing it the specified inputs, then, it perform a deep comparison between the returned dataframe and the expected_output. If both contain similar values the validation will succeed.
 
+## Running your pipeline
+
+Once the pipeline transformations have been validated its time to test run your pipeline as a whole, while working offline dataflow will use the `./sources` folder to simulate the DataSources as CSV files. That means that for this example we must have two CSV files: `./sources/form_entries.csv` and `./sources/salutations.csv`.
+
+When you run the `pipenv run pipeline --name=clean_form_entries` command, dataflow will fetch those two CSV files and pass them as dataframe parameters to the pipeline transformations. 
+
+> Important note: The first dataframe on every transformation should be your cleaning target because it gets passed on from transformation to transformation as a buffer, ideally this first dataframe will become the output of your entire pipeline.
 
 ## Streaming data into pipelines
 
