@@ -2,7 +2,7 @@
 
 <img align="right" src="https://user-images.githubusercontent.com/426452/202270773-8569adeb-7909-4498-b9f5-185242e5680c.png" width="500" />
 
-It's a very simple minimalistic project to clean and deploy datasets in real time using python. Its ideal for small and mid-sized organizations that want to deploy into production a data-processing solution with very few steps and cheap costs. It supports **[batch](https://github.com/breatheco-de/dataflow-project-template#running-your-pipeline)** and **[streaming](https://github.com/breatheco-de/dataflow-project-template#streaming-data-into-pipelines)** processing.
+It's a very simple minimalistic project to clean and deploy datasets in real time using python. Its ideal for small and mid-sized organizations that want to deploy into production a data-processing solution with very few steps and cheap costs. It supports **[batch](#running-your-pipeline)** and **[streaming](#streaming-data-into-pipelines)** processing.
 
 Deploy in heroku in minutes, create pipelines of data with multiple python functions to clean your dataset and save it into CSV, SQL or BigQuery.
 
@@ -103,6 +103,10 @@ Once the pipeline transformations have been validated its time to test run your 
 When you run the `pipenv run pipeline --name=clean_form_entries` command, dataflow will fetch those two CSV files and pass them as dataframe parameters to the pipeline transformations. 
 
 > Important note: The first dataframe on every transformation should be your cleaning target because it gets passed on from transformation to transformation as a buffer, ideally this first dataframe will become the output of your entire pipeline.
+
+## Running in Batch
+
+asd
 
 ## Streaming data into pipelines
 
