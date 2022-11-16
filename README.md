@@ -8,16 +8,40 @@ Deploy in heroku in minutes, create pipelines of data with multiple python funct
     <img src="https://user-images.githubusercontent.com/426452/202270773-8569adeb-7909-4498-b9f5-185242e5680c.png" width="500" />
 </p>
 
-# How use this project
+# Quick Start:
 
-1. Clone into your computer (or gitpod).
-2. Add your transformations into the `./transformations/<pipeline>/` folder.
-3. Configure the project.yml to specify the pipline and transformations in the order you want to execute them. Each pipeline must have at least one source and only one destination. You can have multiple sources if needed.
-4. Add new transformation files as you need them, make sure to include `expected_inputs` and `expected_output` as examples. The expected inputs can be an array of dataframes for multiple sources.
-5. Update your project.yml file as needed to change the order of the transformations.
-6. Validate your transformations running `$ pipenv run validate`.
-7. Run your pipline by running `$ pipenv run pipeline --name=<pipeline_slug>`
-8. If you need to clean your outputs :`$ pipenv run clear`
+1. Clone this repo into your computer (or open it on gitpod).
+2. Create a new folder inside `./pipelines` with the name of your pipeline.
+3. Add your transformations into the recently created folder `./pipelines/<pipeline_name>/`.
+4. Configure the project.yml to specify the pipline and transformations in the order you want to execute them. Each pipeline must have at least one source and only one destination. You can have multiple sources if needed.
+5. Add new transformation files as you need them, make sure to include `expected_inputs` and `expected_output` as examples. The expected inputs can be an array of dataframes for multiple sources.
+6. Update your project.yml file as needed to change the order of the transformations.
+7. Validate your transformations running `$ pipenv run validate`.
+8. Run your pipline by running `$ pipenv run pipeline --name=<pipeline_slug>`
+9. If you need to clean your outputs :`$ pipenv run clear`
+
+## Project.yml
+
+All the project configuration is done in one single file, here is an example with comments:
+
+```yml
+name: "Lead Collection"
+# You can have as many pipelines as you want
+pipelines:
+    # Unique name for your pipeline
+  - slug: "clean_form_entries"
+    # During local development these are CSV files located at te ./sources folder.
+    sources:
+      # The order is relevant, this sources will be passed as parameters to the run() function in the same order
+      - form_entries
+      - salutations
+    # Ignored during local development, its the datasource to wich the pipeline data will be saved to
+    destination: datasource_csv
+    # Order is relevant, they will execute one on top of the other.
+    transformations:
+      - build_hello_world
+      - add_salutation
+```
 
 ## Sources
 
@@ -33,14 +57,46 @@ A pipeline is all the steps needed to clean an incoming source dataset and save 
 
 ## Transformations
 
+Each transformation receives one or many dataframes and must return only one of them.
+
 ```py
 import pandas as pd
 import numpy as np
 
-def run(df):
+def run(df, df2, df3...):
     # ...
     return df
 ```
+
+## Unit testing your pipeline
+
+The command to run your tests is `pipenv run validate`.  
+Each transformation must have two variables: `expected_inputs` and `expected_output`.  
+
+For example, let's say we want to create a transformation that receives a Pandas dataset with two columns (first_name and last_name) and creates a new column called `together` with the combination of the values in the other two. Here is the input and output to properly validate the transformation:
+
+```py
+expected_inputs = [[{
+    'first_name': 'Hello',
+    'last_name': 'World',
+}], []]
+
+expected_output = [{
+    **expected_inputs[0][0],
+    'together': 'Hello World',
+}]
+
+
+def run(df, df2):
+    """
+    It will create a full name property on the payload
+    """
+    df['together'] = df['first_name'] + ' ' + df['last_name']
+
+    return df
+```
+
+When you run the `pipenv run validate` command, Dataflow will run the transformation function while passing it the specified inputs, then, it perform a deep comparison between the returned dataframe and the expected_output. If both contain similar values the validation will succeed.
 
 
 ## Streaming data into pipelines
@@ -57,13 +113,13 @@ Dataflow will run each pipeline as many times as streams are found inside the `s
 
 ### Declaring the stream parameter in the transformation
 
-Make sure to specify the stream optional paramter in the transformation function:
+Make sure to specify one last optional paramter called `stream` in the transformation function, the incoming stream of data will be a dictionary with the exact payload received in the HTTP post request.
 
 ```py
 import pandas as pd
 import numpy as np
 
-def run(df, stream=None):
+def run(df, df2, stream=None):
     # ...
     return df
 ```
