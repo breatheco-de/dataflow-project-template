@@ -6,10 +6,6 @@ It's a very simple minimalistic project to clean and deploy datasets in real tim
 
 Deploy in heroku in minutes, create pipelines of data with multiple python functions to clean your dataset and save it into CSV, SQL or BigQuery.
 
-
-
-
-
 # Quick Start:
 
 1. Clone this repo into your computer (or open it on gitpod).
@@ -59,14 +55,14 @@ A pipeline is all the steps needed to clean an incoming source dataset and save 
 
 ## Transformations
 
-Each transformation receives one or many dataframes and must return only one of them.
+Each transformation receives one or many dataframes and must return the cleaned version that will be passed into the next transformation or will become the pipeline output (if it was the last transformation in the pipeline).
 
 ```py
 import pandas as pd
 import numpy as np
 
 def run(df, df2, df3...):
-    # ...
+    # make some transformations here
     return df
 ```
 
