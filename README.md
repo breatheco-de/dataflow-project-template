@@ -2,7 +2,7 @@
 
 <img align="right" src="https://user-images.githubusercontent.com/426452/202270773-8569adeb-7909-4498-b9f5-185242e5680c.png" width="500" />
 
-It's a very simple minimalistic project to clean and deploy datasets in real time using python. Its ideal for small and mid-sized organizations that want to deploy into production a data-processing solution with very few steps and cheap costs. It supports **batch** and **streaming** processing.
+It's a very simple minimalistic project to clean and deploy datasets in real time using python. Its ideal for small and mid-sized organizations that want to deploy into production a data-processing solution with very few steps and cheap costs. It supports **[batch](https://github.com/breatheco-de/dataflow-project-template#running-your-pipeline)** and **[streaming](https://github.com/breatheco-de/dataflow-project-template#streaming-data-into-pipelines)** processing.
 
 Deploy in heroku in minutes, create pipelines of data with multiple python functions to clean your dataset and save it into CSV, SQL or BigQuery.
 
