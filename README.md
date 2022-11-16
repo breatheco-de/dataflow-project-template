@@ -5,7 +5,7 @@ Its a very simple minimalistic project to clean and deploy datasets in real time
 Deploy in heroku in minutes, create pipelines of data with multiple python functions to clean your dataset and save it into CSV, SQL or BigQuery.
 
 <p align="center">
-![Dataflow explanation](https://user-images.githubusercontent.com/426452/202270773-8569adeb-7909-4498-b9f5-185242e5680c.png)
+    <img src="https://user-images.githubusercontent.com/426452/202270773-8569adeb-7909-4498-b9f5-185242e5680c.png" width="500" />
 </p>
 
 # How use this project
