@@ -106,19 +106,29 @@ When you run the `pipenv run pipeline --name=clean_form_entries` command, datafl
 
 ## Running in Batch
 
-asd
+By default, pipelines run in batch, which basically means that one (or more) entire dataset is sent to the transformation queue to be cleaned.
+
+The following command runs a pipeline in batch mode:
+
+```bash
+pipenv run pipeline --name=clean_publicsupport_fs_messages
+```
 
 ## Streaming data into pipelines
 
-Pipelines also allow streaming chunks of data (one at a time). You can define a csv file that contains a list of each stream as it will come into the pipeline (one at a time). For example:
+Sometimes you need to process a single incoming item into the dataset, instead of cleaning the whole dataset again you only want to clean that single item before adding it to the dataset (one at a time). This is what we call a `stream`.
 
-```
+To simulate a stream of data you can define a csv file where each row will behave like a single stream as it will come into the pipeline (one at a time). The entire pipeline transformation queue will be called for each stream of data.
+
+The following command allows you to run `clean_publicsupport_fs_messages` as many times as rows found on `stream_sample.csv`:
+
+```bash
 pipenv run pipeline --name=clean_publicsupport_fs_messages --stream=stream_sample.csv
 ```
 
 Note: `--stream` is the path to a csv file that contains all the streams you want to test, if the CSV contains multiple rows, each of them will be considered a separate stream and the pipeline will run once for each stream.
 
-Dataflow will run each pipeline as many times as streams are found inside the `stream_sample.csv` file.
+> AGAIN: Dataflow will run each pipeline as many times as streams are found inside the `stream_sample.csv` file.
 
 ### Declaring the stream parameter in the transformation
 
