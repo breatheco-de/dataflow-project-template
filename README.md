@@ -98,13 +98,13 @@ When you run the `pipenv run validate` command, Dataflow will run the transforma
 
 ## Running your pipeline
 
-Once the pipeline transformations have been validated its time to test run your pipeline as a whole, while working offline dataflow will use the `./sources` folder to simulate the DataSources as CSV files. That means that for this example we must have two CSV files: `./sources/form_entries.csv` and `./sources/salutations.csv`.
+Once the pipeline transformations have been validated (unit tested) its time to test-run your pipeline as a whole using a real dataset, while working in locally dataflow will use the `./sources` folder to simulate the DataSources as CSV files. That means that for this example we must have two CSV files: `./sources/form_entries.csv` and `./sources/salutations.csv`.
 
 When you run the `pipenv run pipeline --name=clean_form_entries` command, dataflow will fetch those two CSV files and pass them as dataframe parameters to the pipeline transformations. 
 
 > Important note: The first dataframe on every transformation should be your cleaning target because it gets passed on from transformation to transformation as a buffer, ideally this first dataframe will become the output of your entire pipeline.
 
-## Running in Batch
+### Running in Batch
 
 By default, pipelines run in batch, which basically means that one (or more) entire dataset is sent to the transformation queue to be cleaned.
 
@@ -114,7 +114,7 @@ The following command runs a pipeline in batch mode:
 pipenv run pipeline --name=clean_publicsupport_fs_messages
 ```
 
-## Streaming data into pipelines
+### Streaming data into pipelines
 
 Sometimes you need to process a single incoming item into the dataset, instead of cleaning the whole dataset again you only want to clean that single item before adding it to the dataset (one at a time). This is what we call a `stream`.
 
@@ -130,7 +130,7 @@ Note: `--stream` is the path to a csv file that contains all the streams you wan
 
 > AGAIN: Dataflow will run each pipeline as many times as streams are found inside the `stream_sample.csv` file.
 
-### Declaring the stream parameter in the transformation
+#### Declaring the stream parameter in the transformation
 
 Make sure to specify one last optional paramter called `stream` in the transformation function, the incoming stream of data will be a dictionary with the exact payload received in the HTTP post request.
 
