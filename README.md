@@ -27,7 +27,7 @@ You can independently work in your data pipeline as long as you need, we are try
 
 ## Examples
 
-We have already deployed two piplines into production and they seem to be working fine so far:
+We have already deployed two pipelines into production and they seem to be working fine so far:
 
 - [Events and Workshops](https://github.com/4GeeksAcademy/dataflow-project-events): Dashboard for displaying the company event and worksops activity.
 - [Form Entries](https://github.com/4GeeksAcademy/dataflow-project-form_entry) is a pipeline to process incoming marketing leads, it was created for building a dashboard that includes a dozen metrics.
