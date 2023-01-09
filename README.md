@@ -15,7 +15,7 @@ You can independently work in your data pipeline as long as you need, we are try
 # Quick Start:
 
 1. Clone this repo into your computer (or open it on gitpod).
-2. Add your sample dataset's that will be used as inputs for your transformations into the `sources` folder.
+2. Add your sample dataset's that will be used as inputs for your transformations into the `./sources` folder.
 3. Create a new folder inside `./pipelines` with the name of your pipeline.
 4. Add your transformations into the recently created folder `./pipelines/<pipeline_name>/`.
 5. Configure the project.yml to specify the pipline and transformations in the order you want to execute them. Each pipeline must have at least one source and only one destination. You can have multiple sources if needed.
