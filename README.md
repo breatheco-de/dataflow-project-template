@@ -6,17 +6,24 @@ It's a very simple minimalistic project to clean and deploy datasets in real tim
 
 Deploy in heroku in minutes, create pipelines of data with multiple python functions to clean your dataset and save it into CSV, SQL or BigQuery.
 
+## What is this project template?
+
+This template is meant to be used for building data pipelines that can later be easily published into production using the [Dataflow Core](https://github.com/breatheco-de/dataflow). This template was built with the purpose that you don't need the dataflow core for creating and testing your pipeline in localhost.
+
+You can independently work in your data pipeline as long as you need, we are trying to GUARANTEE that running your pipeline locally using CSV files will be a reliable way of testing and that not bugs should occur once you deploy it into production.
+
 # Quick Start:
 
 1. Clone this repo into your computer (or open it on gitpod).
-2. Create a new folder inside `./pipelines` with the name of your pipeline.
-3. Add your transformations into the recently created folder `./pipelines/<pipeline_name>/`.
-4. Configure the project.yml to specify the pipline and transformations in the order you want to execute them. Each pipeline must have at least one source and only one destination. You can have multiple sources if needed.
-5. Add new transformation files as you need them, make sure to include `expected_inputs` and `expected_output` as examples. The expected inputs can be an array of dataframes for multiple sources.
-6. Update your project.yml file as needed to change the order of the transformations.
-7. Validate your transformations running `$ pipenv run validate`.
-8. Run your pipline by running `$ pipenv run pipeline --name=<pipeline_slug>`
-9. If you need to clean your outputs :`$ pipenv run clear`
+2. Add your sample dataset's that will be used as inputs for your transformations into the `sources` folder.
+3. Create a new folder inside `./pipelines` with the name of your pipeline.
+4. Add your transformations into the recently created folder `./pipelines/<pipeline_name>/`.
+5. Configure the project.yml to specify the pipline and transformations in the order you want to execute them. Each pipeline must have at least one source and only one destination. You can have multiple sources if needed.
+6. Add new transformation files as you need them, make sure to include `expected_inputs` and `expected_output` as examples. The expected inputs can be an array of dataframes for multiple sources.
+7. Update your project.yml file as needed to change the order of the transformations.
+8. Validate your transformations running `$ pipenv run validate`.
+9. Run your pipline by running `$ pipenv run pipeline --name=<pipeline_slug>`
+10. If you need to clean your outputs :`$ pipenv run clear`
 
 ## Project.yml
 
@@ -43,7 +50,11 @@ pipelines:
 
 ## Sources
 
-Dataflow can retrieve or store datasets of information from and into CSV files, SQL Databases and Google BigQuery.
+Dataflow can retrieve or store datasets of information from and into CSV files, SQL Databases and Google BigQuery. 
+
+In this template you will find a [sources folder](/tree/main/sources) were you can put your CSV files that will simulate the production databases or datasets.
+
+You will also find an [output folder]([/tree/main/sources](https://github.com/breatheco-de/dataflow-project-template/tree/main/output)) that will be automatically filled by the dataflow template each time you run one of your project pieplines using the `$ pipenv run pipeline --name=<pipeline_slug>` command.
 
 ## Pipelines
 
