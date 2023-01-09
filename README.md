@@ -25,6 +25,14 @@ You can independently work in your data pipeline as long as you need, we are try
 9. Run your pipline by running `$ pipenv run pipeline --name=<pipeline_slug>`
 10. If you need to clean your outputs :`$ pipenv run clear`
 
+## Examples
+
+We have already deployed two piplines into production and they seem to be working fine so far:
+
+- [Events and Workshops](https://github.com/4GeeksAcademy/dataflow-project-events): Dashboard for displaying the company event and worksops activity.
+- [Form Entries](https://github.com/4GeeksAcademy/dataflow-project-form_entry) is a pipeline to process incoming marketing leads, it was created for building a dashboard that includes a dozen metrics.
+- [Public Support Chat](https://github.com/4GeeksAcademy/dataflow-project-public-support): Monitor support messages and track support agents, [here are the requirements](https://github.com/4GeeksAcademy/About-4Geeks-Academy/issues/3542).
+
 ## Project.yml
 
 All the project configuration is done in one single file, here is an example with comments:
