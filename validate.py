@@ -101,7 +101,7 @@ def validate_trans(q, t, _errors):
         # just in case the _in variable has mutated
         _in = in_backup
 
-        in_out_same = DeepDiff(to_list(_in)[0], to_list(_out)[0])
+        in_out_same = DeepDiff(to_list(_in)[0], to_list(_out)[0], ignore_nan_inequality=True)
 
         if len(output) > 0:
             output = to_list(output)[0]
@@ -113,7 +113,7 @@ def validate_trans(q, t, _errors):
             raise Exception(
                 'Transformation output its empty but you were expecting more')
 
-        diff = DeepDiff(output, _out)
+        diff = DeepDiff(output, _out, ignore_nan_inequality=True)
     except Exception as e:
         _errors[q + '.' + t] = e
 
