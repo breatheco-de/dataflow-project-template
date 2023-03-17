@@ -130,7 +130,7 @@ By default, pipelines run in batch, which basically means that one (or more) ent
 The following command runs a pipeline in batch mode:
 
 ```bash
-pipenv run pipeline --name=clean_publicsupport_fs_messages
+pipenv run pipeline --name=clean_form_entries
 ```
 
 ### Streaming data into pipelines
@@ -142,7 +142,7 @@ To simulate a stream of data you can define a csv file where each row will behav
 The following command allows you to run `clean_publicsupport_fs_messages` as many times as rows found on `stream_sample.csv`:
 
 ```bash
-pipenv run pipeline --name=clean_publicsupport_fs_messages --stream=stream_sample.csv
+pipenv run pipeline --name=form_entries_stream --stream=stream_sample.csv
 ```
 
 Note: `--stream` is the path to a csv file that contains all the streams you want to process, if the CSV contains multiple rows, each of them will be considered a separate stream and the pipeline will run once for each stream.
