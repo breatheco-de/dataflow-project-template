@@ -145,7 +145,7 @@ The following command allows you to run `clean_publicsupport_fs_messages` as man
 pipenv run pipeline --name=clean_publicsupport_fs_messages --stream=stream_sample.csv
 ```
 
-Note: `--stream` is the path to a csv file that contains all the streams you want to test, if the CSV contains multiple rows, each of them will be considered a separate stream and the pipeline will run once for each stream.
+Note: `--stream` is the path to a csv file that contains all the streams you want to process, if the CSV contains multiple rows, each of them will be considered a separate stream and the pipeline will run once for each stream.
 
 > AGAIN: Dataflow will run each pipeline as many times as streams are found inside the `stream_sample.csv` file.
 

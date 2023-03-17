@@ -18,7 +18,7 @@ expected_output = [{
 }]
 
 
-def run(df, df2):
+def run(df, df2, stream=None):
     """
     It will create a full name property on the payload
     """
