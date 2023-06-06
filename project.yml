@@ -2,7 +2,7 @@
 name: "Lead Collection"
 # You can have as many pipelines as you want
 pipelines:
-    # Unique name for your pipeline
+    # Unique name for your pipeline, must match folder name in ./pipelines/<folder_name>
   - slug: "clean_form_entries"
     # During local development these are CSV files located at te ./sources folder.
     sources:
